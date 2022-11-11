@@ -1,7 +1,16 @@
+import "reflect-metadata"
 import express from "express";
+
+import "./shared/container";
+
+import { router } from "./routes";
 
 const app = express();
 
-app.listen(3000, () => {
-  console.log('App Hello Api running at 3000!');
+app.use(express.json());
+
+app.use(router);
+
+app.listen(3333, () => {
+  console.log('Server is running');
 });
