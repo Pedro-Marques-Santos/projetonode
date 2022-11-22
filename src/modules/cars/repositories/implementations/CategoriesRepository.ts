@@ -4,20 +4,21 @@ import { ICategoriesRepository, ICreateCategoryDTO } from "../ICategoriesRespoti
 import { getRepository, Repository } from "typeorm"
 
 class CategoriesRepository implements ICategoriesRepository {
-  private categories: Category[] = [];
   private repository: Repository<Category> // recebe os methodos de inserir, atualizar e remover
 
   constructor() {
-    this.categories = [];
     this.repository = getRepository(Category); //repositório embutido
   }
 
-  findByName(name: string): boolean {
+  async findByName(name: string): Promise<boolean> {
+    const list = await this.repository.find();
     let stateName = false;
-    this.categories.map((element) => {
+    list.map((element) => {
       stateName = element.name === name;
     })
-
+    // this.categories.map((element) => {
+    //   stateName = element.name === name;
+    // })
     return stateName;
   }
 

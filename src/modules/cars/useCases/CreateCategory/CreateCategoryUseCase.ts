@@ -1,4 +1,5 @@
 import { inject, injectable } from 'tsyringe'
+import { AppError } from '../../../../errors/AppErrors';
 import { ICategoriesRepository } from "../../repositories/ICategoriesRespotitory";
 
 interface IRequest {
@@ -14,15 +15,15 @@ class CreateCategoryUseCase {
     private categoriesRepository: ICategoriesRepository
   ) { }
 
-  execute({ name, description }: IRequest) {
+  async execute({ name, description }: IRequest): Promise<void> {
 
-    const categoryAlreadyExists = this.categoriesRepository.findByName(name);
+    const categoryAlreadyExists = await this.categoriesRepository.findByName(name);
 
     if (categoryAlreadyExists) {
-      throw new Error("Já existe um carro registrado com esse nome!");
+      throw new AppError("Já existe um carro registrado com esse nome!", 401);
     }
 
-    this.categoriesRepository.create({ name, description })
+    await this.categoriesRepository.create({ name, description })
   }
 
 }
