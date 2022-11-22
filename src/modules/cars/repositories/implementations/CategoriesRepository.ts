@@ -1,11 +1,15 @@
-import { Category } from "../../model/Category";
+import { Category } from "../../entities/Category";
 import { ICategoriesRepository, ICreateCategoryDTO } from "../ICategoriesRespotitory";
+
+import { getRepository, Repository } from "typeorm"
 
 class CategoriesRepository implements ICategoriesRepository {
   private categories: Category[] = [];
+  private repository: Repository<Category> // recebe os methodos de inserir, atualizar e remover
 
   constructor() {
     this.categories = [];
+    this.repository = getRepository(Category); //repositório embutido
   }
 
   findByName(name: string): boolean {
@@ -17,17 +21,18 @@ class CategoriesRepository implements ICategoriesRepository {
     return stateName;
   }
 
-  list(): Category[] {
-    return this.categories;
+  async list(): Promise<Category[]> {
+    const categories = await this.repository.find()
+    return categories;
   }
 
-  create({ name, description }: ICreateCategoryDTO): void {
-    const category = new Category();
+  async create({ name, description }: ICreateCategoryDTO): Promise<void> {
+    const category = this.repository.create({
+      description,
+      name
+    }); //criando um tipo de objeto para guardar no database
 
-    category.name = name;
-    category.description = description;
-
-    this.categories.push(category);
+    await this.repository.save(category)
   }
 
 }

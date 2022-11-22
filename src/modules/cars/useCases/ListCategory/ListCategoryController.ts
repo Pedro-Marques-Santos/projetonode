@@ -5,12 +5,12 @@ import { container } from "tsyringe";
 import { ListCategoryUseCase } from "./ListCategoryUseCase"
 
 class ListCategoryController {
-  handle(request: Request, response: Response): Response {
+  async handle(request: Request, response: Response): Promise<Response> {
     const listCategoryUseCase = container.resolve(ListCategoryUseCase);
 
-    const allList = listCategoryUseCase.execute();
+    const list = await listCategoryUseCase.execute();
 
-    return response.json(allList);
+    return response.json(list);
   }
 }
 
