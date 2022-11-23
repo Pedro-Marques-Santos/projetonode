@@ -16,9 +16,6 @@ class CategoriesRepository implements ICategoriesRepository {
     list.map((element) => {
       stateName = element.name === name;
     })
-    // this.categories.map((element) => {
-    //   stateName = element.name === name;
-    // })
     return stateName;
   }
 
