@@ -1,4 +1,4 @@
-import { IUserRepositoryDTO } from "../../dtos/IUserRepositoryDTO";
+import { IUserRepositoryDTO, UserVerifyDTO } from "../../dtos/IUserRepositoryDTO";
 import { IUserRepository } from "../IUsersRepository";
 
 import { getRepository, Repository } from "typeorm";
@@ -18,6 +18,26 @@ class UserRepository implements IUserRepository {
       email === element.email ? userExist = true : userExist;
     });
     return userExist;
+  }
+
+  async verifyLogin(email: string, password: string): Promise<UserVerifyDTO> {
+
+    let userVerify = {
+      exist: false
+    } as UserVerifyDTO;
+
+    const users = await this.repository.find();
+    users.map((user) => {
+      if (email === user.email && password === user.password) {
+        userVerify = {
+          ...userVerify,
+          exist: true,
+          user: user
+        }
+      }
+    })
+
+    return userVerify;
   }
 
   async create({ name, password, email }: IUserRepositoryDTO): Promise<void> {
