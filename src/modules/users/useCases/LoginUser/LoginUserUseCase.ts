@@ -1,7 +1,9 @@
 import { inject, injectable } from 'tsyringe'
 import { AppError } from '../../../../errors/AppErrors';
-import { ILoginUserDTO } from '../../dtos/IUserRepositoryDTO'
+import { ILoginUserDTO, UserVerifyDTO, UserWithToken } from '../../dtos/IUserRepositoryDTO'
 import { IUserRepository } from '../../repositories/IUsersRepository'
+
+import jwt from 'jsonwebtoken'
 
 @injectable()
 class LoginUserCase {
@@ -11,7 +13,9 @@ class LoginUserCase {
     private userRepository: IUserRepository
   ) { }
 
-  async execute({ email, password }: ILoginUserDTO): Promise<void> {
+  async execute({ email, password }: ILoginUserDTO): Promise<UserWithToken> {
+
+    const secretKey = 'skljaksdj9983498327453lsldkjf';
 
     const emailExist = await this.userRepository.findByEmail(email);
 
@@ -24,6 +28,25 @@ class LoginUserCase {
     if (verifyLogin.exist === false) {
       throw new AppError("Email ou Senha incorreto", 401);
     }
+
+    const createToken = jwt.sign(
+      {
+        email: verifyLogin.user.email,
+        password: verifyLogin.user.password
+      },
+      secretKey,
+      {
+        expiresIn: '1h',
+        subject: '1'
+      }
+    )
+
+    const userWitchToken = {
+      user: verifyLogin.user,
+      token: createToken
+    } as UserWithToken;
+
+    return userWitchToken
 
   }
 

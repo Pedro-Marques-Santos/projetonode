@@ -9,9 +9,10 @@ class LoginUserController {
     const { email, password } = request.body;
 
     const loginUserUseCase = container.resolve(LoginUserCase);
-    await loginUserUseCase.execute({ email, password });
 
-    return respose.status(201).send();
+    const user = await loginUserUseCase.execute({ email, password });
+
+    return respose.json(user);
   }
 }
 

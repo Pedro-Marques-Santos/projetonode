@@ -16,4 +16,9 @@ interface UserVerifyDTO {
   user?: User;
 }
 
-export { IUserRepositoryDTO, ILoginUserDTO, UserVerifyDTO }
+interface UserWithToken {
+  user?: User;
+  token: string;
+}
+
+export { IUserRepositoryDTO, ILoginUserDTO, UserVerifyDTO, UserWithToken }
